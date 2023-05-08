@@ -1,11 +1,13 @@
-FROM node:14-alpine
+FROM node:20-alpine
 
 RUN mkdir -p /usr/src
 WORKDIR /usr/src
 
 COPY . .
+# COPY /home/azureuser/poc-automation/package.json /usr/src/package.json
 
 RUN npm install
+RUN npm update
 
 COPY deployment/.env_dev .env
 # RUN rm deployment/.env_dev deployment/.env_uat deployment/.env_prod
