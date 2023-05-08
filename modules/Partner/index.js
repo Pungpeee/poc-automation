@@ -1,0 +1,1 @@
+export { default as PartnerContainer } from './Container'

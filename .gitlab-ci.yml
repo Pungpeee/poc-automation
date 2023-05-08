@@ -1,0 +1,149 @@
+variables:
+  PROJECT_NAME: "${CI_PROJECT_NAME}"
+  BRANCH: "${CI_COMMIT_REF_NAME}"
+  COMMIT_ID: "${CI_COMMIT_SHA}"
+  GIT_CLONE_PATH: $CI_BUILDS_DIR/$project_name
+
+before_script:
+  - echo "$PROJECT_NAME $BRANCH $COMMIT_ID"
+  - export git_Build_id=$(echo $COMMIT_ID | cut -c1-8)
+  - export build_time=$(date +"%D %T")
+
+stages:
+  - dev-build
+  - dev-deploy
+  - uat-build
+  - uat-deploy
+  - prod-build
+  - prod-deploy
+
+# -------------------------------- DEV --------------------------------
+
+dev-build:
+  stage: dev-build
+  only:
+    - dev
+  tags:
+    - vekin
+    - central
+    - uat
+  environment:
+    name: development
+    url: https://co2-web-dev.vekin.co.th
+  variables:
+    git_Build_id: $(echo $git_Build_id)
+  script:
+    - echo "{\"build\":\"$build_time\",\"repo\":\"$PROJECT_NAME\",\"branch\":\"$BRANCH\",\"commit_id\":\"$git_Build_id\"}" >> ${PWD}/build.json
+    - docker build -f deployment/Dockerfile.dev
+      -t vekin/gr-co2-web-dev:$git_Build_id .
+    - docker image rm -f vekin/gr-co2-web-dev:$git_Build_id
+    - docker image rm -f vekin/gr-co2-web-dev:latest
+    - docker build -f deployment/Dockerfile.dev
+      -t vekin/gr-co2-web-dev:latest .
+
+dev-deploy:
+  stage: dev-deploy
+  only:
+    - dev
+  tags:
+    - vekin
+    - central
+    - uat
+  environment:
+    name: development
+    url: https://co2-web-dev.vekin.co.th
+  script:
+    - docker stop gr-co2-web-dev
+    - docker rm gr-co2-web-dev
+    - docker run -d
+      --restart=always
+      -p 5061:3000
+      --name gr-co2-web-dev
+      vekin/gr-co2-web-dev:latest
+
+# -------------------------------- UAT --------------------------------
+
+uat-build:
+  stage: uat-build
+  only:
+    - uat
+  tags:
+    - vekin
+    - central
+    - uat
+  environment:
+    name: uat
+    url: https://co2-web-uat.vekin.co.th
+  variables:
+    git_Build_id: $(echo $git_Build_id)
+  script:
+    - echo "{\"build\":\"$build_time\",\"repo\":\"$PROJECT_NAME\",\"branch\":\"$BRANCH\",\"commit_id\":\"$git_Build_id\"}" >> ${PWD}/build.json
+    - docker build -f deployment/Dockerfile.uat
+      -t vekin/gr-co2-web-uat:$git_Build_id .
+    - docker image rm -f vekin/gr-co2-web-uat:$git_Build_id
+    - docker image rm -f vekin/gr-co2-web-uat:latest
+    - docker build -f deployment/Dockerfile.uat
+      -t vekin/gr-co2-web-uat:latest .
+
+uat-deploy:
+  stage: uat-deploy
+  only:
+    - uat
+  tags:
+    - vekin
+    - central
+    - uat
+  environment:
+    name: uat
+    url: https://co2-web-uat.vekin.co.th
+  script:
+    - docker stop gr-co2-web-uat
+    - docker rm gr-co2-web-uat
+    - docker run -d
+      --restart=always
+      -p 5062:3000
+      --name gr-co2-web-uat
+      vekin/gr-co2-web-uat:latest
+# -------------------------------- PROD --------------------------------
+
+prod-build:
+  stage: prod-build
+  only:
+    - master
+  tags:
+    - co2
+    - web
+    - prod
+  environment:
+    name: production
+    url: https://carbon.in.th
+  variables:
+    git_Build_id: $(echo $git_Build_id)
+  script:
+    - echo "{\"build\":\"$build_time\",\"repo\":\"$PROJECT_NAME\",\"branch\":\"$BRANCH\",\"commit_id\":\"$git_Build_id\"}" >> ${PWD}/build.json
+    - docker build -f deployment/Dockerfile.prod
+      -t vekin/gr-co2-web-prod:$git_Build_id .
+    - docker image rm -f vekin/gr-co2-web-prod:$git_Build_id
+    - docker image rm -f vekin/gr-co2-web-prod:latest
+    - docker build -f deployment/Dockerfile.prod
+      -t vekin/gr-co2-web-prod:latest .
+
+prod-deploy:
+  stage: prod-deploy
+  only:
+    - master
+  tags:
+    - co2
+    - web
+    - prod
+  environment:
+    name: production
+    url: https://carbon.in.th
+  script:
+    - docker stop gr-co2-web-prod
+    - docker rm gr-co2-web-prod
+    - docker run -d
+      --restart=always
+      -p 9001:3000
+      --name gr-co2-web-prod
+      vekin/gr-co2-web-prod:latest
