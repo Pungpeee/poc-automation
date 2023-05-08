@@ -67,12 +67,12 @@ jobs:
 #           tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
 #           file: ./Dockerfile
 
-      - name: Build and push container registry azure
-        uses: azure/docker-login@v1
+      - name: Build the frontend image and push it to ACR
+        uses: docker/build-push-action@v2
         with:
-          login-server: vekawspocregistry.azurecr.io
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          push: true
+          tags: vekawspocregistry.azurecr.io/poc-automation:latest
+          file: deployment/Dockerfile.dev
   
       - run: |
           docker build -t vekawspocregistry.azurecr.io/poc-automation:latest .
