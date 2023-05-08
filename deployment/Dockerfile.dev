@@ -7,7 +7,7 @@ COPY . .
 
 RUN npm install
 
-COPY deployment/.env_dev .env
+COPY deployment/.env_dev
 # RUN rm deployment/.env_dev deployment/.env_uat deployment/.env_prod
 
 # start app
