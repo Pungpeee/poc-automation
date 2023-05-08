@@ -73,7 +73,6 @@ jobs:
           login-server: vekawspocregistry.azurecr.io
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
-          file: /deployment
   
       - run: |
           docker build -t vekawspocregistry.azurecr.io/poc-automation:latest .
