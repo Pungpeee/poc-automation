@@ -57,8 +57,8 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
-      - name: Lowercase the repo name and username
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+      # - name: Lowercase the repo name and username
+      #   run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
 #       - name: Build and push container image to registry
 #         uses: docker/build-push-action@v2
@@ -75,9 +75,9 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
   
       - run: |
-          docker build -t vekawspocregistry.azurecr.io/${GITHUB_ENV}:latest .
-          docker push vekawspocregistry.azurecr.io/${GITHUB_ENV}:latest
-          docker run -d vekawspocregistry.azurecr.io/${GITHUB_ENV}:latest
+          docker build -t vekawspocregistry.azurecr.io/poc-automation:latest .
+          docker push vekawspocregistry.azurecr.io/poc-automation:latest
+          docker run -d vekawspocregistry.azurecr.io/poc-automation:latest
 
   deploy:
       needs: build
@@ -91,5 +91,5 @@ jobs:
          username: ${{ secrets.USERNAME }}
          password: ${{ secrets.PASSWORD }}
          script: |
-           docker stop vekawspocregistry.azurecr.io/${GITHUB_ENV}:latest
-           docker pull vekawspocregistry.azurecr.io/${GITHUB_ENV}:latest
+           docker stop vekawspocregistry.azurecr.io/poc-automation:latest
+           docker pull vekawspocregistry.azurecr.io/poc-automation:latest
