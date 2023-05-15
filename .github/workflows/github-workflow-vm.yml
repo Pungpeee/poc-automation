@@ -54,6 +54,6 @@ jobs:
          username: ${{ secrets.USERNAME }}
          password: ${{ secrets.PASSWORD }}
          script: |
-              docker build -f ./deployment/Dockerfile.dev -t vekawspocregistry.azurecr.io/poc-automation-test:latest .
-              docker run -f ./deployment/Dockerfile.dev -d vekawspocregistry.azurecr.io/poc-automation-test::latest
+              docker build -t vekawspocregistry.azurecr.io/poc-automation-test:latest ./deployment/Dockerfile.dev
+              docker run -d vekawspocregistry.azurecr.io/poc-automation-test::latest
               docker ps -a
