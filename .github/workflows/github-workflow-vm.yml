@@ -10,6 +10,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Enable Docker BuildKit
+        run: |
+          echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -34,12 +38,12 @@ jobs:
       runs-on: ubuntu-latest
       steps:
 
-      - name: Azure Container Registry Login
-        uses: azure/docker-login@v1
-        with:
-          login-server: vekawspocregistry.azurecr.io # default: index.docker.io
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+#       - name: Azure Container Registry Login
+#         uses: azure/docker-login@v1
+#         with:
+#           login-server: vekawspocregistry.azurecr.io # default: index.docker.io
+#           username: ${{ secrets.REGISTRY_USERNAME }}
+#           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Deploy execute command ssh to remote server
         env:
@@ -50,6 +54,7 @@ jobs:
          username: ${{ secrets.USERNAME }}
          password: ${{ secrets.PASSWORD }}
          script: |
+              docker login vekawspocregistry.azurecr.io -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
               docker build -t vekawspocregistry.azurecr.io/poc-automation-test:latest .
               docker run -d vekawspocregistry.azurecr.io/poc-automation-test::latest
               docker ps -a
