@@ -26,7 +26,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: vekawspocregistry.azurecr.io/poc-automation-test:test
+          tags: vekawspocregistry.azurecr.io/poc-automation-test:latest
           file: ./deployment/Dockerfile.dev
           
   deploy:
@@ -43,13 +43,13 @@ jobs:
 
       - name: Deploy execute command ssh to remote server
         env:
-           IMAGE_NAME: vekawspocregistry.azurecr.io/poc-automation-test:test
+           IMAGE_NAME: vekawspocregistry.azurecr.io/poc-automation-test:latest
         uses: appleboy/ssh-action@master
         with:
          host: ${{ secrets.HOST }}
          username: ${{ secrets.USERNAME }}
          password: ${{ secrets.PASSWORD }}
          script: |
-              docker build -t vekawspocregistry.azurecr.io/poc-automation-test:test .
-              docker run -d vekawspocregistry.azurecr.io/poc-automation-test:test
+              docker build -t vekawspocregistry.azurecr.io/poc-automation-test:latest .
+              docker run -d vekawspocregistry.azurecr.io/poc-automation-test::latest
               docker ps -a
