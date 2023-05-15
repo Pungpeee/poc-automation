@@ -1,6 +1,10 @@
 FROM node:14-alpine
 
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+RUN apt-get install -y nodejs
+RUN npm install -g yarn
 RUN mkdir -p /usr/src
+
 WORKDIR /usr/src
 
 COPY . .
@@ -8,10 +12,10 @@ RUN npm install -g npm@9.6.6
 RUN npm install react@17.0.2
 
 COPY deployment/.env_dev .env
-# RUN rm deployment/.env_dev deployment/.env_uat deployment/.env_prod
+RUN yarn install --frozen-lockfile --production=false --silent
 
 # start app
-RUN npm run build
+RUN yarn build
 EXPOSE 3000
 
 CMD npm start
