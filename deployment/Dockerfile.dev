@@ -5,7 +5,7 @@ WORKDIR /usr/src
 
 COPY . .
 RUN npm install -g npm@9.6.6
-RUN npm install
+RUN npm install react@17.0.2
 
 COPY deployment/.env_dev .env
 # RUN rm deployment/.env_dev deployment/.env_uat deployment/.env_prod
