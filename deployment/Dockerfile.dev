@@ -6,7 +6,7 @@ WORKDIR /usr/src
 COPY . .
 
 RUN npm i --save --legacy-peer-deps
-
+RUN npm install -g npm@9.6.6
 COPY deployment/.env_dev .env
 # RUN rm deployment/.env_dev deployment/.env_uat deployment/.env_prod
 
